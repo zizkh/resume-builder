@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Studio — ATS-Optimized Resume Builder</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* =========================================================
+     RESET + TOKENS
+     ========================================================= */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F8F5EF;
+    --bg-card: #FFFFFF;
+    --bg-soft: #F2EEE5;
+    --bg-warm: #EDE6D7;
+    --ink: #1A1815;
+    --ink-soft: #4A453E;
+    --ink-mute: #7A7368;
+    --ink-faint: #B5AC9E;
+    --line: #E5DDC9;
+    --line-soft: #EFE8D6;
+    --accent: #1F3A5F;
+    --accent-soft: #2C4D7A;
+    --accent-faint: #E8EEF6;
+    --warn: #B8541F;
+    --warn-soft: #FBEFE0;
+    --good: #2E6B47;
+    --good-soft: #E2EEE6;
+    --bad:  #A52828;
+    --bad-soft: #F5E0E0;
+    --highlight-bg: #F2F5FA;
+    --serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --sans:  'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+    --persian: 'Vazirmatn', 'Tahoma', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --radius: 4px;
+    --radius-lg: 10px;
+    --shadow-sm: 0 1px 2px rgba(26, 24, 21, 0.04);
+    --shadow-md: 0 2px 8px rgba(26, 24, 21, 0.06),
+                 0 8px 32px rgba(26, 24, 21, 0.04);
+    --tx: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  body.lang-fa {
+    font-family: var(--persian);
+    direction: rtl;
+  }
+
+  button { font: inherit; cursor: pointer; }
+  input, textarea, select { font: inherit; }
+  a { color: var(--accent); }
+
+  /* =========================================================
+     APP SHELL
+     ========================================================= */
+  .app-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    background: rgba(248, 245, 239, 0.92);
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: var(--bg);
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 18px;
+    border-radius: 50%;
+    transform: translateY(2px);
+  }
+  .brand-tag {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-mute);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+  body.lang-fa .brand-tag { margin-left: 0; margin-right: 4px; }
+  .header-spacer { flex: 1; }
+  .header-actions {
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .lang-toggle {
+    display: inline-flex;
+    background: var(--bg-warm);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px;
+  }
+  .lang-toggle button {
+    background: transparent;
+    border: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink-mute);
+    transition: all var(--tx);
+  }
+  .lang-toggle button.active {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 500;
+    transition: all var(--tx);
+  }
+  .btn:hover { border-color: var(--ink-mute); transform: translateY(-1px); }
+  .btn.primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+  .btn.primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn.ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--ink-soft);
+  }
+  .btn.ghost:hover {
+    background: var(--bg-warm);
+    color: var(--ink);
+  }
+  .btn-icon {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* =========================================================
+     LAYOUT
+     ========================================================= */
+  .workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 0;
+    min-height: calc(100vh - 60px);
+  }
+  @media (max-width: 1100px) {
+    .workspace { grid-template-columns: 1fr; }
+    .preview-panel { display: none; }
+    .workspace.show-preview .form-panel { display: none; }
+    .workspace.show-preview .preview-panel { display: flex; }
+  }
+
+  .form-panel {
+    padding: 28px 32px 100px;
+    border-right: 1px solid var(--line);
+    overflow-y: auto;
+    min-height: calc(100vh - 60px);
+  }
+  body.lang-fa .form-panel {
+    border-right: 0;
+    border-left: 1px solid var(--line);
+  }
+  .preview-panel {
+    background: var(--bg-soft);
+    padding: 28px 32px 100px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* mobile tab bar */
+  .mobile-tabs {
+    display: none;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+  @media (max-width: 1100px) {
+    .mobile-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 12px;
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+  }
+  .mobile-tabs button {
+    background: none;
+    border: 0;
+    padding: 12px 16px;
+    color: var(--ink-mute);
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all var(--tx);
+  }
+  .mobile-tabs button.active {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  /* =========================================================
+     FORM PANEL
+     ========================================================= */
+  .form-intro {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .form-intro h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 6px 0;
+    color: var(--ink);
+  }
+  .form-intro h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .form-intro p {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+
+  details.section {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--tx);
+  }
+  details.section[open] { box-shadow: var(--shadow-md); }
+
+  details.section > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+  details.section > summary::-webkit-details-marker { display: none; }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    width: 22px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 17px;
+    flex: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  body.lang-fa .section-title { font-family: var(--persian); font-weight: 600; }
+  .section-meta {
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-family: var(--mono);
+  }
+  details.section > summary::after {
+    content: '+';
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink-mute);
+    font-weight: 300;
+    line-height: 1;
+    transition: transform var(--tx);
+  }
+  details.section[open] > summary::after { content: '−'; }
+
+  .section-body {
+    padding: 0 18px 18px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 16px;
+  }
+
+  /* form fields */
+  .field { margin-bottom: 14px; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 600px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+  label.field-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    color: var(--ink-mute);
+    margin-bottom: 5px;
+  }
+  body.lang-fa label.field-label { text-transform: none; letter-spacing: 0; }
+  input.field-input, textarea.field-input, select.field-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 13.5px;
+    font-family: inherit;
+    transition: border-color var(--tx), background var(--tx);
+  }
+  input.field-input:focus, textarea.field-input:focus, select.field-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-card);
+  }
+  textarea.field-input { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+  .field-hint {
+    font-size: 11.5px;
+    color: var(--ink-mute);
+    margin-top: 4px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .field-hint .hint-good { color: var(--good); }
+  .field-hint .hint-warn { color: var(--warn); }
+
+  .bullet-input {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    align-items: flex-start;
+  }
+  .bullet-input::before {
+    content: '•';
+    color: var(--ink-faint);
+    padding: 9px 4px 0 0;
+    font-size: 14px;
+  }
+  body.lang-fa .bullet-input::before { padding: 9px 0 0 4px; }
+  .bullet-input textarea {
+    flex: 1;
+    min-height: 38px;
+    padding: 8px 10px;
+  }
+  .bullet-input button.remove-bullet {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    padding: 6px 8px;
+    font-size: 18px;
+    line-height: 1;
+    transition: color var(--tx);
+  }
+  .bullet-input button.remove-bullet:hover { color: var(--bad); }
+
+  .add-row {
+    background: transparent;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    color: var(--ink-mute);
+    font-size: 12px;
+    width: 100%;
+    margin-top: 4px;
+    transition: all var(--tx);
+  }
+  .add-row:hover { border-color: var(--accent); color: var(--accent); }
+
+  .job-block, .edu-block {
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 12px;
+    background: var(--bg);
+  }
+  .job-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .job-header h4 {
+    margin: 0;
+    flex: 1;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  body.lang-fa .job-header h4 { font-family: var(--persian); }
+  .remove-block {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    font-size: 14px;
+    padding: 4px 8px;
+    transition: color var(--tx);
+  }
+  .remove-block:hover { color: var(--bad); }
+
+  /* skills tags input */
+  .tag-input {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg);
+    padding: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 38px;
+    align-items: center;
+  }
+  .tag-input:focus-within {
+    border-color: var(--accent);
+    background: var(--bg-card);
+  }
+  .tag {
+    background: var(--accent-faint);
+    color: var(--accent);
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tag button {
+    background: transparent;
+    border: 0;
+    color: var(--accent);
+    opacity: 0.6;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .tag button:hover { opacity: 1; }
+  .tag-input input {
+    flex: 1;
+    min-width: 80px;
+    border: 0;
+    background: transparent;
+    padding: 4px 6px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  /* =========================================================
+     PREVIEW PANEL
+     ========================================================= */
+  .preview-frame {
+    background: white;
+    box-shadow: var(--shadow-md);
+    border-radius: 2px;
+    aspect-ratio: 210/297;
+    width: 100%;
+    overflow: hidden;
+    transition: transform var(--tx);
+  }
+  .preview-inner {
+    transform-origin: top left;
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 1.4cm 1.6cm;
+    background: white;
+    color: #111;
+    font-family: 'Helvetica', Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.45;
+  }
+  .preview-inner.preview-fa {
+    direction: rtl;
+    font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+    line-height: 1.7;
+  }
+
+  /* preview content styles — match the PDF */
+  .pv-name {
+    font-weight: 700;
+    font-size: 20pt;
+    color: #1F3A5F;
+    margin: 0 0 2px;
+    letter-spacing: -0.01em;
+  }
+  .pv-title {
+    font-size: 12pt;
+    color: #444;
+    margin: 0 0 6px;
+  }
+  .pv-contact {
+    font-size: 9pt;
+    color: #111;
+    margin: 0 0 8px;
+  }
+  .pv-contact .sep { color: #999; margin: 0 6px; }
+  .pv-rule {
+    border: 0;
+    border-top: 0.8pt solid #1F3A5F;
+    margin: 0 0 8px 0;
+  }
+  .pv-section {
+    font-weight: 700;
+    font-size: 11pt;
+    color: #1F3A5F;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 12px 0 0;
+    padding-bottom: 3px;
+    border-bottom: 0.6pt solid #1F3A5F;
+  }
+  .preview-fa .pv-section { text-transform: none; }
+  .pv-summary {
+    margin: 6px 0 0;
+    text-align: justify;
+    line-height: 1.5;
+  }
+  .preview-fa .pv-summary { line-height: 1.85; }
+  .pv-summary b, .pv-bullets b, .pv-skills b, .pv-ach b {
+    font-weight: 700;
+  }
+  .pv-ach-box {
+    background: #F2F5FA;
+    padding: 6px 10px;
+    margin: 6px 0 0;
+  }
+  .pv-ach-item {
+    margin: 2px 0;
+    line-height: 1.45;
+    padding-left: 4px;
+  }
+  .preview-fa .pv-ach-item { padding-left: 0; padding-right: 4px; line-height: 1.7; }
+  .pv-ach-item::before {
+    content: '› ';
+    color: #1F3A5F;
+    font-weight: bold;
+  }
+  .pv-skills p {
+    margin: 1px 0;
+    line-height: 1.45;
+  }
+  .preview-fa .pv-skills p { line-height: 1.7; }
+  .pv-job { margin-top: 8px; }
+  .pv-job-title {
+    font-weight: 700;
+    font-size: 10.5pt;
+    margin: 0;
+  }
+  .pv-job-company {
+    font-style: italic;
+    font-size: 10pt;
+    color: #444;
+    margin: 0;
+  }
+  .pv-job-date {
+    font-size: 9pt;
+    color: #666;
+    margin: 0 0 4px;
+  }
+  .pv-bullets { margin: 4px 0; padding-left: 14px; }
+  .preview-fa .pv-bullets { padding-left: 0; padding-right: 14px; }
+  .pv-bullets li {
+    margin: 0 0 2px;
+    line-height: 1.45;
+    text-align: justify;
+  }
+  .preview-fa .pv-bullets li { line-height: 1.7; }
+  .pv-edu { margin-top: 8px; }
+  .pv-edu-degree {
+    font-weight: 700;
+    font-size: 10.5pt;
+    margin: 0;
+  }
+  .pv-edu-school {
+    font-style: italic;
+    font-size: 10pt;
+    color: #444;
+    margin: 0;
+  }
+  .pv-edu-date {
+    font-size: 9pt;
+    color: #666;
+    margin: 0;
+  }
+  .pv-langs, .pv-certs {
+    margin: 6px 0 0;
+    line-height: 1.5;
+  }
+  .pv-note {
+    font-style: italic;
+    font-size: 8.5pt;
+    color: #666;
+    margin: 4px 0 0;
+  }
+
+  /* =========================================================
+     SCORE PANEL
+     ========================================================= */
+  .score-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .score-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .score-number {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.04em;
+  }
+  .score-number sup {
+    font-size: 22px;
+    color: var(--ink-mute);
+    font-weight: 400;
+    margin-left: 2px;
+  }
+  .score-label {
+    flex: 1;
+  }
+  .score-label-text {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  body.lang-fa .score-label-text { font-family: var(--persian); }
+  .score-label-meta {
+    font-size: 11px;
+    color: var(--ink-mute);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+  body.lang-fa .score-label-meta { font-family: var(--persian); }
+  .score-rating { font-weight: 600; }
+  .score-rating.poor { color: var(--bad); }
+  .score-rating.fair { color: var(--warn); }
+  .score-rating.good { color: var(--good); }
+  .score-rating.great { color: var(--accent); }
+
+  .score-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .score-row {
+    display: grid;
+    grid-template-columns: 1fr auto 60px;
+    gap: 12px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+  .score-row .row-label {
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .score-row .row-bar {
+    background: var(--bg-warm);
+    height: 4px;
+    border-radius: 2px;
+    width: 110px;
+    overflow: hidden;
+  }
+  .score-row .row-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 2px;
+  }
+  .score-row .row-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-mute);
+    text-align: right;
+  }
+  body.lang-fa .score-row .row-num { font-family: var(--persian); }
+
+  /* feedback section */
+  .feedback-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .feedback-card h3 {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 12px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  body.lang-fa .feedback-card h3 { font-family: var(--persian); }
+  .feedback-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .feedback-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .feedback-item:last-child { border-bottom: 0; }
+  .fb-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 500;
+    flex-shrink: 0;
+    height: fit-content;
+    margin-top: 1px;
+  }
+  body.lang-fa .fb-tag { font-family: var(--persian); text-transform: none; }
+  .fb-tag.error {
+    background: var(--bad-soft);
+    color: var(--bad);
+  }
+  .fb-tag.warn {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .fb-tag.win {
+    background: var(--good-soft);
+    color: var(--good);
+  }
+  .fb-text { flex: 1; color: var(--ink-soft); }
+  .fb-text strong { color: var(--ink); }
+  .fb-empty {
+    text-align: center;
+    color: var(--ink-mute);
+    padding: 14px 0;
+    font-size: 12.5px;
+    font-style: italic;
+  }
+
+  /* =========================================================
+     ACTION BAR (sticky bottom)
+     ========================================================= */
+  .action-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    z-index: 90;
+    backdrop-filter: blur(8px);
+    background: rgba(248, 245, 239, 0.95);
+  }
+  .action-bar .spacer { flex: 1; }
+
+  /* =========================================================
+     PRINT STYLES
+     ========================================================= */
+  @media print {
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    body { background: white; }
+    .app-header, .form-panel, .score-card, .feedback-card,
+    .action-bar, .mobile-tabs { display: none !important; }
+    .workspace { display: block; min-height: 0; }
+    .preview-panel {
+      padding: 0;
+      background: white;
+      min-height: 0;
+      display: block;
+    }
+    .preview-frame {
+      box-shadow: none;
+      aspect-ratio: auto;
+      page-break-inside: avoid;
+    }
+    .preview-inner {
+      transform: none !important;
+      box-shadow: none;
+      width: 100%;
+      min-height: 0;
+      padding: 1.4cm 1.6cm;
+    }
+    .pv-job, .pv-edu { page-break-inside: avoid; }
+  }
+
+  /* small flair */
+  .small-print {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: center;
+    margin-top: 16px;
+  }
+  .small-print a { color: var(--ink-mute); }
+
+  /* tooltip */
+  [data-tip] { position: relative; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--tx);
+  }
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* file input wrapper */
+  .file-input-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+  .file-input-wrap input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body class="lang-en">
+
+<!-- ============================ HEADER ============================ -->
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-mark">R</span>
+    <span>Resume Studio</span>
+    <span class="brand-tag" data-i18n="brand-tag">ATS-Optimized</span>
+  </div>
+  <div class="header-spacer"></div>
+  <div class="header-actions">
+    <div class="lang-toggle" role="tablist">
+      <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="lang-fa" onclick="setLang('fa')">فا</button>
+    </div>
+    <div class="file-input-wrap">
+      <button class="btn ghost" data-i18n="load">Load</button>
+      <input type="file" accept="application/json" onchange="loadJSON(event)">
+    </div>
+    <button class="btn ghost" onclick="saveJSON()" data-i18n="save">Save</button>
+  </div>
+</header>
+
+<!-- ============================ MOBILE TABS ============================ -->
+<div class="mobile-tabs">
+  <button class="active" data-tab="edit" data-i18n="tab-edit" onclick="setMobileTab('edit')">Edit</button>
+  <button data-tab="preview" data-i18n="tab-preview" onclick="setMobileTab('preview')">Preview</button>
+  <button data-tab="score" data-i18n="tab-score" onclick="setMobileTab('score')">Score</button>
+</div>
+
+<!-- ============================ WORKSPACE ============================ -->
+<div class="workspace" id="workspace">
+
+  <!-- ============== FORM PANEL ============== -->
+  <div class="form-panel">
+    <div class="form-intro">
+      <h1 data-i18n="intro-title">Build a resume <em>that gets read.</em></h1>
+      <p data-i18n="intro-sub">Fill in the sections below. The preview updates live, and the score on the right tells you exactly what to fix.</p>
+    </div>
+
+    <!-- BASICS -->
+    <details class="section" open>
+      <summary>
+        <span class="section-num">01</span>
+        <span class="section-title" data-i18n="sec-basics">Basics</span>
+      </summary>
+      <div class="section-body">
+        <div class="field">
+          <label class="field-label" data-i18n="lbl-name">Full Name</label>
+          <input class="field-input" id="f-name" oninput="upd('name', this.value)">
+        </div>
+        <div class="field">
+          <label class="field-label" data-i18n="lbl-title">Professional Title</label>
+          <input class="field-input" id="f-title" oninput="upd('title', this.value)" placeholder="e.g. Senior Backend Engineer | Python &amp; Distributed Systems">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" data-i18n="lbl-phone">Phone</label>
+            <input class="field-input" id="f-phone" oninput="upd('phone', this.value)" placeholder="+98 ...">
+          </div>
+          <div class="field">
+            <label class="field-label" data-i18n="lbl-email">Email</label>
+            <input class="field-input" id="f-email" oninput="upd('email', this.value)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" data-i18n="lbl-linkedin">LinkedIn URL</label>
+            <input class="field-input" id="f-linkedin" oninput="upd('linkedin', this.value)" placeholder="https://linkedin.com/in/...">
+          </div>
+          <div class="field">
+            <label class="field-label" data-i18n="lbl-location">Location</label>
+            <input class="field-input" id="f-location" oninput="upd('location', this.value)" placeholder="Tehran, Iran">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" data-i18n="lbl-tagline">Tagline (optional)</label>
+          <input class="field-input" id="f-tagline" oninput="upd('tagline', this.value)" placeholder="e.g. Open to Remote &amp; International Roles">
+        </div>
+      </div>
+    </details>
+
+    <!-- SUMMARY -->
+    <details class="section" open>
+      <summary>
+        <span class="section-num">02</span>
+        <span class="section-title" data-i18n="sec-summary">Professional Summary</span>
+        <span class="section-meta" id="meta-summary"></span>
+      </summary>
+      <div class="section-body">
+        <textarea class="field-input" id="f-summary" rows="5" oninput="upd('summary', this.value)" placeholder="3-5 lines. Lead with role + years of experience, top 3 skills/specializations, and 2-3 quantified KPIs (numbers, percentages)."></textarea>
+        <div class="field-hint" id="hint-summary"></div>
+      </div>
+    </details>
+
+    <!-- ACHIEVEMENTS -->
+    <details class="section" open>
+      <summary>
+        <span class="section-num">03</span>
+        <span class="section-title" data-i18n="sec-achievements">Key Achievements</span>
+        <span class="section-meta" id="meta-achievements"></span>
+      </summary>
+      <div class="section-body">
+        <div class="field-hint" data-i18n="hint-achievements" style="margin-bottom:10px;">5 wins with quantifiable numbers. Each line = one achievement. Use **double asterisks** to bold key numbers.</div>
+        <div id="ach-list"></div>
+        <button class="add-row" onclick="addAchievement()" data-i18n="add-achievement">+ Add achievement</button>
+      </div>
+    </details>
+
+    <!-- SKILLS -->
+    <details class="section" open>
+      <summary>
+        <span class="section-num">04</span>
+        <span class="section-title" data-i18n="sec-skills">Core Skills</span>
+        <span class="section-meta" id="meta-skills"></span>
+      </summary>
+      <div class="section-body">
+        <div class="field-hint" data-i18n="hint-skills" style="margin-bottom:10px;">Group skills into 4-6 categories. Press Enter to add each skill.</div>
+        <div id="skills-list"></div>
+        <button class="add-row" onclick="addSkillGroup()" data-i18n="add-skill-group">+ Add skill category</button>
+      </div>
+    </details>
+
+    <!-- EXPERIENCE -->
+    <details class="section" open>
+      <summary>
+        <span class="section-num">05</span>
+        <span class="section-title" data-i18n="sec-experience">Professional Experience</span>
+        <span class="section-meta" id="meta-experience"></span>
+      </summary>
+      <div class="section-body">
+        <div id="exp-list"></div>
+        <button class="add-row" onclick="addJob()" data-i18n="add-job">+ Add another role</button>
+      </div>
+    </details>
+
+    <!-- EDUCATION -->
+    <details class="section">
+      <summary>
+        <span class="section-num">06</span>
+        <span class="section-title" data-i18n="sec-education">Education</span>
+      </summary>
+      <div class="section-body">
+        <div id="edu-list"></div>
+        <button class="add-row" onclick="addEdu()" data-i18n="add-edu">+ Add degree</button>
+      </div>
+    </details>
+
+    <!-- CERTIFICATIONS -->
+    <details class="section">
+      <summary>
+        <span class="section-num">07</span>
+        <span class="section-title" data-i18n="sec-certs">Certifications</span>
+      </summary>
+      <div class="section-body">
+        <div class="field-hint" data-i18n="hint-certs" style="margin-bottom:8px;">One per line. Format: <em>Name — Provider (Year)</em></div>
+        <textarea class="field-input" id="f-certs" rows="4" oninput="upd('certs', this.value)" placeholder="e.g. Advanced Marketing — Tapsell (2022)"></textarea>
+      </div>
+    </details>
+
+    <!-- LANGUAGES -->
+    <details class="section">
+      <summary>
+        <span class="section-num">08</span>
+        <span class="section-title" data-i18n="sec-langs">Languages</span>
+      </summary>
+      <div class="section-body">
+        <input class="field-input" id="f-langs" oninput="upd('langs', this.value)" placeholder="e.g. Persian — Native | English — Professional">
+      </div>
+    </details>
+
+    <p class="small-print" data-i18n="footer-note">Built for recruiters and candidates serious about ATS compliance.</p>
+  </div>
+
+  <!-- ============== PREVIEW + SCORE PANEL ============== -->
+  <div class="preview-panel" id="previewPanel">
+    <!-- score card -->
+    <div class="score-card">
+      <div class="score-header">
+        <div class="score-number"><span id="scoreNum">0</span><sup>/100</sup></div>
+        <div class="score-label">
+          <p class="score-label-text" data-i18n="score-title">ATS &amp; Recruiter Score</p>
+          <p class="score-label-meta">
+            <span data-i18n="score-meta">Based on ResumeWorded &amp; JobScan rubrics</span>
+            ·
+            <span class="score-rating" id="scoreRating">—</span>
+          </p>
+        </div>
+      </div>
+      <div class="score-breakdown" id="scoreBreakdown"></div>
+    </div>
+
+    <!-- feedback card -->
+    <div class="feedback-card">
+      <h3 data-i18n="feedback-title">Live Feedback</h3>
+      <ul class="feedback-list" id="feedbackList"></ul>
+    </div>
+
+    <!-- preview frame -->
+    <div class="preview-frame" id="previewFrame">
+      <div class="preview-inner" id="preview"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ ACTION BAR ============================ -->
+<div class="action-bar">
+  <button class="btn ghost" onclick="resetData()" data-i18n="reset">Reset</button>
+  <button class="btn ghost" onclick="loadDemo()" data-i18n="demo">Load demo</button>
+  <div class="spacer"></div>
+  <button class="btn" onclick="exportDOCX()" data-i18n="export-doc">Export Word</button>
+  <button class="btn primary" onclick="window.print()" data-i18n="export-pdf">Export PDF</button>
+</div>
+
+<!-- ============================ I18N + STATE + LOGIC ============================ -->
+<script>
+
+// ============================================================
+// I18N
+// ============================================================
+const I18N = {
+  en: {
+    'brand-tag': 'ATS-Optimized',
+    'load': 'Load',
+    'save': 'Save',
+    'tab-edit': 'Edit',
+    'tab-preview': 'Preview',
+    'tab-score': 'Score',
+    'intro-title': 'Build a resume <em>that gets read.</em>',
+    'intro-sub': 'Fill in the sections below. The preview updates live, and the score on the right tells you exactly what to fix.',
+    'sec-basics': 'Basics',
+    'lbl-name': 'Full Name',
+    'lbl-title': 'Professional Title',
+    'lbl-phone': 'Phone',
+    'lbl-email': 'Email',
+    'lbl-linkedin': 'LinkedIn URL',
+    'lbl-location': 'Location',
+    'lbl-tagline': 'Tagline (optional)',
+    'sec-summary': 'Professional Summary',
+    'sec-achievements': 'Key Achievements',
+    'hint-achievements': '5 wins with quantifiable numbers. Use **double asterisks** to bold key numbers.',
+    'add-achievement': '+ Add achievement',
+    'sec-skills': 'Core Skills',
+    'hint-skills': 'Group skills into 4-6 categories. Press Enter to add each skill.',
+    'add-skill-group': '+ Add skill category',
+    'sec-experience': 'Professional Experience',
+    'add-job': '+ Add another role',
+    'sec-education': 'Education',
+    'add-edu': '+ Add degree',
+    'sec-certs': 'Certifications',
+    'hint-certs': 'One per line. Format: <em>Name — Provider (Year)</em>',
+    'sec-langs': 'Languages',
+    'footer-note': 'Built for recruiters and candidates serious about ATS compliance.',
+    'score-title': 'ATS & Recruiter Score',
+    'score-meta': 'Based on ResumeWorded & JobScan rubrics',
+    'feedback-title': 'Live Feedback',
+    'reset': 'Reset',
+    'demo': 'Load demo',
+    'export-doc': 'Export Word',
+    'export-pdf': 'Export PDF',
+    'job-title': 'Role title',
+    'job-company': 'Company',
+    'job-location': 'Location',
+    'job-start': 'Start (e.g. Jan 2024)',
+    'job-end': 'End (or "Present")',
+    'job-bullets': 'Bullets — start each with a strong action verb',
+    'add-bullet': '+ Add bullet',
+    'edu-degree': 'Degree',
+    'edu-school': 'School',
+    'edu-date': 'Year(s) (e.g. 2020 – 2024)',
+    'achievement-ph': 'e.g. Drove **70% growth in organic traffic** through topic-cluster strategy',
+    'skill-cat-ph': 'Category (e.g. SEO)',
+    'skill-add-ph': 'Add a skill, press Enter',
+    'rating-poor': 'Needs major work',
+    'rating-fair': 'Needs polish',
+    'rating-good': 'Solid',
+    'rating-great': 'Excellent',
+    'sections': {
+      summary: 'Professional Summary',
+      ach: 'Key Achievements',
+      skills: 'Core Skills',
+      exp: 'Professional Experience',
+      edu: 'Education',
+      certs: 'Professional Certifications',
+      langs: 'Languages',
+    },
+    'feedback-empty': 'Start filling in the form — feedback will appear here.',
+    'fb-add-name': 'Add your <strong>full name</strong>.',
+    'fb-add-title': 'Add a <strong>professional title</strong> (e.g. "Senior Backend Engineer | Python &amp; Distributed Systems").',
+    'fb-add-email': 'Add a contact <strong>email</strong>.',
+    'fb-add-phone': 'Add a contact <strong>phone number</strong>.',
+    'fb-add-summary': 'Add a <strong>professional summary</strong>. Lead with years of experience and top 3 KPIs.',
+    'fb-summary-short': 'Your summary is <strong>too short</strong>. Aim for 50–100 words covering experience, top skills, and 2–3 KPIs.',
+    'fb-summary-long': 'Your summary is <strong>too long</strong>. Trim to 50–100 words; recruiters skim.',
+    'fb-summary-no-num': 'Your summary has <strong>no numbers</strong>. Add 2–3 quantified KPIs (e.g. "70% growth", "5+ years", "30,000+ users").',
+    'fb-no-ach': 'Add at least <strong>4–5 Key Achievements</strong> with concrete numbers — biggest score booster.',
+    'fb-ach-no-num': 'Achievement {n} has <strong>no number</strong>. Add a quantified result (%, $, count).',
+    'fb-no-skills': 'Add at least <strong>4 skill categories</strong>.',
+    'fb-no-exp': 'Add at least <strong>1 work experience</strong>.',
+    'fb-no-bullet-num': '<strong>{role}</strong> bullet {n} has no number. Add a quantified result.',
+    'fb-no-bullet-num-many': '{n} of {total} bullets in <strong>{role}</strong> have no quantified result. Add numbers to at least half.',
+    'fb-weak-verb': '<strong>{role}</strong> bullet {n} starts with weak word "{word}". Try strong verbs like "Built", "Led", "Drove", "Delivered".',
+    'fb-buzzword': 'Found buzzword "<strong>{word}</strong>". Replace with concrete example.',
+    'fb-pronoun': 'Found personal pronoun "<strong>{word}</strong>". Resumes shouldn\'t use "I", "my", "we".',
+    'fb-bullet-long': '<strong>{role}</strong> bullet {n} is too long ({words} words). Trim to 12-22 words.',
+    'fb-bullet-short': '<strong>{role}</strong> bullet {n} is too short. Expand to a full impact statement.',
+    'fb-no-edu': 'Add at least <strong>1 education entry</strong>.',
+    'fb-no-langs': 'Add a <strong>Languages</strong> line.',
+    'fb-strong-summary': '<strong>Strong summary</strong> with concrete numbers. ✓',
+    'fb-strong-ach': '<strong>5+ key achievements</strong> with metrics. ✓',
+    'fb-strong-verbs': 'All bullets start with <strong>strong action verbs</strong>. ✓',
+    'fb-no-buzz': '<strong>No buzzwords or clichés</strong>. ✓',
+    'fb-no-pronouns': '<strong>No personal pronouns</strong>. ✓',
+    'fb-good-length': 'Resume length is <strong>well-calibrated</strong>. ✓',
+    'rb-impact': 'Impact (KPIs)',
+    'rb-brevity': 'Brevity & length',
+    'rb-style': 'Style & verbs',
+    'rb-sections': 'Section completeness',
+    'rb-soft': 'Soft skills',
+    'rb-buzz': 'Buzzword check',
+  },
+  fa: {
+    'brand-tag': 'بهینه برای ATS',
+    'load': 'بارگذاری',
+    'save': 'ذخیره',
+    'tab-edit': 'ویرایش',
+    'tab-preview': 'پیش‌نمایش',
+    'tab-score': 'امتیاز',
+    'intro-title': 'رزومه‌ای بساز <em>که خوانده شود.</em>',
+    'intro-sub': 'بخش‌ها را پر کن. پیش‌نمایش زنده آپدیت می‌شود و امتیاز در سمت چپ دقیقاً می‌گوید چه چیز را اصلاح کنی.',
+    'sec-basics': 'اطلاعات پایه',
+    'lbl-name': 'نام و نام خانوادگی',
+    'lbl-title': 'عنوان شغلی',
+    'lbl-phone': 'تلفن',
+    'lbl-email': 'ایمیل',
+    'lbl-linkedin': 'آدرس لینکدین',
+    'lbl-location': 'موقعیت مکانی',
+    'lbl-tagline': 'متن کوتاه (اختیاری)',
+    'sec-summary': 'خلاصه حرفه‌ای',
+    'sec-achievements': 'دستاوردهای کلیدی',
+    'hint-achievements': '۵ دستاورد همراه با عدد. از **دو ستاره** برای bold کردن اعداد استفاده کن.',
+    'add-achievement': '+ افزودن دستاورد',
+    'sec-skills': 'مهارت‌های کلیدی',
+    'hint-skills': 'مهارت‌ها را در ۴ تا ۶ دسته گروه‌بندی کن. برای افزودن هر مهارت Enter بزن.',
+    'add-skill-group': '+ افزودن دسته مهارت',
+    'sec-experience': 'سوابق شغلی',
+    'add-job': '+ افزودن سابقه شغلی',
+    'sec-education': 'سوابق تحصیلی',
+    'add-edu': '+ افزودن مدرک',
+    'sec-certs': 'گواهی‌نامه‌ها',
+    'hint-certs': 'هر گواهی در یک خط. فرمت: <em>نام — مرکز ارائه‌دهنده (سال)</em>',
+    'sec-langs': 'زبان‌ها',
+    'footer-note': 'ساخته شده برای استخدام‌کنندگان و کاندیداهایی که جدی به ATS اهمیت می‌دهند.',
+    'score-title': 'امتیاز ATS و استخدام‌کننده',
+    'score-meta': 'بر اساس معیارهای ResumeWorded و JobScan',
+    'feedback-title': 'بازخورد زنده',
+    'reset': 'پاک کردن',
+    'demo': 'نمونه',
+    'export-doc': 'خروجی Word',
+    'export-pdf': 'خروجی PDF',
+    'job-title': 'عنوان شغلی',
+    'job-company': 'شرکت',
+    'job-location': 'موقعیت',
+    'job-start': 'تاریخ شروع (مثل دی ۱۴۰۲)',
+    'job-end': 'تاریخ پایان (یا «تاکنون»)',
+    'job-bullets': 'موارد — هر کدام را با یک فعل قوی شروع کن',
+    'add-bullet': '+ افزودن مورد',
+    'edu-degree': 'مدرک',
+    'edu-school': 'دانشگاه',
+    'edu-date': 'سال (مثل ۱۳۹۹ – ۱۴۰۳)',
+    'achievement-ph': 'مثال: رشد **۷۰٪ ترافیک ارگانیک** از طریق استراتژی topic-cluster',
+    'skill-cat-ph': 'دسته (مثلاً سئو)',
+    'skill-add-ph': 'افزودن مهارت، Enter بزن',
+    'rating-poor': 'نیاز به بازنویسی جدی',
+    'rating-fair': 'نیاز به اصلاح',
+    'rating-good': 'خوب',
+    'rating-great': 'عالی',
+    'sections': {
+      summary: 'خلاصه حرفه‌ای',
+      ach: 'دستاوردهای کلیدی',
+      skills: 'مهارت‌های کلیدی',
+      exp: 'سوابق شغلی',
+      edu: 'سوابق تحصیلی',
+      certs: 'گواهی‌نامه‌های حرفه‌ای',
+      langs: 'زبان‌ها',
+    },
+    'feedback-empty': 'پر کردن فرم را شروع کن — بازخوردها این‌جا ظاهر می‌شوند.',
+    'fb-add-name': '<strong>نام</strong> را اضافه کن.',
+    'fb-add-title': '<strong>عنوان شغلی</strong> را اضافه کن.',
+    'fb-add-email': '<strong>ایمیل</strong> اضافه کن.',
+    'fb-add-phone': '<strong>تلفن</strong> اضافه کن.',
+    'fb-add-summary': '<strong>خلاصه حرفه‌ای</strong> اضافه کن. با سال تجربه و ۳ KPI برتر شروع کن.',
+    'fb-summary-short': 'خلاصه‌ات <strong>خیلی کوتاه</strong> است. بین ۵۰ تا ۱۰۰ کلمه با تجربه، مهارت‌ها و ۲ تا ۳ KPI بنویس.',
+    'fb-summary-long': 'خلاصه‌ات <strong>خیلی طولانی</strong> است. به ۵۰ تا ۱۰۰ کلمه کوتاه کن.',
+    'fb-summary-no-num': 'خلاصه‌ات <strong>هیچ عددی</strong> ندارد. ۲ تا ۳ KPI کمی اضافه کن.',
+    'fb-no-ach': 'حداقل <strong>۴ تا ۵ دستاورد کلیدی</strong> با عدد اضافه کن — بزرگترین تقویت‌کننده امتیاز.',
+    'fb-ach-no-num': 'دستاورد {n} <strong>هیچ عددی</strong> ندارد. یک نتیجه کمی اضافه کن.',
+    'fb-no-skills': 'حداقل <strong>۴ دسته مهارت</strong> اضافه کن.',
+    'fb-no-exp': 'حداقل <strong>۱ سابقه شغلی</strong> اضافه کن.',
+    'fb-no-bullet-num': 'مورد {n} در <strong>{role}</strong> هیچ عددی ندارد. یک نتیجه کمی اضافه کن.',
+    'fb-no-bullet-num-many': '{n} از {total} مورد در <strong>{role}</strong> عدد ندارد. به حداقل نصف آنها عدد اضافه کن.',
+    'fb-weak-verb': 'مورد {n} در <strong>{role}</strong> با کلمه ضعیف "{word}" شروع شده. از افعال قوی مثل «طراحی»، «اجرا»، «هدایت» استفاده کن.',
+    'fb-buzzword': 'کلیشه «<strong>{word}</strong>» پیدا شد. با یک مثال مشخص جایگزین کن.',
+    'fb-pronoun': 'ضمیر شخصی «<strong>{word}</strong>» پیدا شد. در رزومه از «من»، «ما»، «خودم» استفاده نکن.',
+    'fb-bullet-long': 'مورد {n} در <strong>{role}</strong> خیلی طولانی است ({words} کلمه). به ۱۲ تا ۲۲ کلمه کوتاه کن.',
+    'fb-bullet-short': 'مورد {n} در <strong>{role}</strong> خیلی کوتاه است. به یک عبارت تأثیرگذار کامل گسترش بده.',
+    'fb-no-edu': 'حداقل <strong>۱ سابقه تحصیلی</strong> اضافه کن.',
+    'fb-no-langs': 'بخش <strong>زبان‌ها</strong> را اضافه کن.',
+    'fb-strong-summary': '<strong>خلاصه قوی</strong> با اعداد مشخص. ✓',
+    'fb-strong-ach': '<strong>۵+ دستاورد کلیدی</strong> با اعداد. ✓',
+    'fb-strong-verbs': 'همه موارد با <strong>افعال قوی</strong> شروع می‌شوند. ✓',
+    'fb-no-buzz': '<strong>بدون buzzword و کلیشه</strong>. ✓',
+    'fb-no-pronouns': '<strong>بدون ضمیر شخصی</strong>. ✓',
+    'fb-good-length': 'طول رزومه <strong>به خوبی تنظیم شده</strong>. ✓',
+    'rb-impact': 'تأثیر (KPIها)',
+    'rb-brevity': 'کوتاهی و طول',
+    'rb-style': 'سبک و افعال',
+    'rb-sections': 'کامل بودن بخش‌ها',
+    'rb-soft': 'مهارت‌های نرم',
+    'rb-buzz': 'بررسی کلیشه‌ها',
+  }
+};
+
+// ============================================================
+// VOCABULARIES
+// ============================================================
+const STRONG_VERBS = new Set([
+  // English
+  'architected','engineered','built','designed','developed','implemented',
+  'produced','led','managed','drove','delivered','shipped','launched',
+  'optimized','improved','increased','reduced','cut','grew','lifted',
+  'boosted','scaled','achieved','exceeded','spearheaded','owned',
+  'established','founded','created','authored','analyzed','evaluated',
+  'assessed','modeled','diagnosed','resolved','mentored','coached',
+  'trained','partnered','collaborated','coordinated','executed','applied',
+  'introduced','adopted','configured','deployed','automated','refactored',
+  'containerized','migrated','integrated','transformed','streamlined',
+  'accelerated','expanded','negotiated','presented','researched',
+  'investigated','ranked','reached','generated','rewrote','restructured',
+  'build','design','implement','architect','contribute','partner','lead',
+  'drive','develop','ship','produce','manage','deliver','optimize',
+  'taught','gained','executed','planned','ideated',
+  // Persian (verbs without prefixes)
+  'طراحی','اجرا','رهبری','مدیریت','توسعه','ساخت','پیاده‌سازی','بهینه‌سازی',
+  'تولید','ارائه','تحویل','هدایت','افزایش','کاهش','بهبود','گسترش',
+  'هماهنگی','مشارکت','منتورینگ','آموزش','تحلیل','طراحی','نگارش',
+  'تدوین','اجرای','ایده‌پردازی','برنامه‌ریزی','به‌کارگیری','مالکیت',
+  'هم‌بنیان‌گذاری','رشد','تشخیص','رفع','جذب','ایجاد','بنا','استقرار',
+  'هم‌راستاسازی','هم‌راستا','معماری','مهندسی','بازنویسی','بازطراحی',
+  'بازسازی','پارتنرشیپ','کوآردینیشن','تربیت','هم‌کاری','ذخیره','اولویت‌بندی'
+]);
+
+const WEAK_VERBS_EN = ['worked on','helped with','assisted with','participated in','involved in','exposed to','familiar with','responsible for','duties included','tasked with','in charge of'];
+const WEAK_VERBS_FA = ['کمک کردم','کار کردم','شرکت کردم','مسئول','وظایف','آشنایی دارم'];
+
+const BUZZWORDS_EN = ['results-driven','team player','go-getter','passionate','self-starter','synergy','thought leader','rockstar','ninja','guru','world-class','best-in-class','cutting-edge','wheelhouse','dynamic individual','hard worker','hit the ground running','think outside the box','value add','value-add','leverage synergies','go above and beyond'];
+const BUZZWORDS_FA = ['تیم پلیر','نتیجه‌محور','اشتیاق فراوان','سخت‌کوش','خلاقیت بی‌نظیر'];
+
+const PRONOUNS_EN = /\b(I|me|my|mine|we|our|us)\b/gi;
+const PRONOUNS_FA = /\b(من|ما|خودم|خودمان|مال من|مال ما)\b/g;
+
+// ============================================================
+// STATE
+// ============================================================
+const initialState = () => ({
+  lang: 'en',
+  name: '',
+  title: '',
+  phone: '',
+  email: '',
+  linkedin: '',
+  location: '',
+  tagline: '',
+  summary: '',
+  achievements: ['', '', '', '', ''],
+  skills: [
+    { category: '', items: [] },
+    { category: '', items: [] },
+    { category: '', items: [] },
+  ],
+  experience: [
+    { title: '', company: '', location: '',
+      start: '', end: '', bullets: ['', '', ''] }
+  ],
+  education: [
+    { degree: '', school: '', date: '' }
+  ],
+  certs: '',
+  langs: '',
+});
+
+let state = initialState();
+
+// ============================================================
+// I18N HELPERS
+// ============================================================
+function t(key, vars = {}) {
+  let s = (I18N[state.lang] && I18N[state.lang][key]) || key;
+  for (const [k, v] of Object.entries(vars)) {
+    s = s.replace(`{${k}}`, v);
+  }
+  return s;
+}
+
+function setLang(lang) {
+  state.lang = lang;
+  document.body.classList.toggle('lang-fa', lang === 'fa');
+  document.body.classList.toggle('lang-en', lang === 'en');
+  document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+  document.documentElement.lang = lang;
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-fa').classList.toggle('active', lang === 'fa');
+  applyI18N();
+  renderAll();
+}
+
+function applyI18N() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.innerHTML = t(key);
+  });
+}
+
+// ============================================================
+// MOBILE TABS
+// ============================================================
+function setMobileTab(tab) {
+  document.querySelectorAll('.mobile-tabs button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  const ws = document.getElementById('workspace');
+  ws.classList.toggle('show-preview', tab !== 'edit');
+  if (tab === 'score') {
+    document.querySelector('.score-card').scrollIntoView({behavior: 'smooth'});
+  } else if (tab === 'preview') {
+    document.querySelector('.preview-frame').scrollIntoView({behavior: 'smooth'});
+  }
+}
+
+// ============================================================
+// STATE UPDATERS
+// ============================================================
+function upd(field, value) {
+  state[field] = value;
+  renderAll();
+}
+
+function addAchievement() {
+  state.achievements.push('');
+  renderAchievementsForm();
+  renderAll();
+}
+function setAch(i, value) {
+  state.achievements[i] = value;
+  renderAll();
+}
+function removeAch(i) {
+  state.achievements.splice(i, 1);
+  renderAchievementsForm();
+  renderAll();
+}
+
+function addSkillGroup() {
+  state.skills.push({ category: '', items: [] });
+  renderSkillsForm();
+  renderAll();
+}
+function removeSkillGroup(i) {
+  state.skills.splice(i, 1);
+  renderSkillsForm();
+  renderAll();
+}
+function setSkillCat(i, value) {
+  state.skills[i].category = value;
+  renderAll();
+}
+function addSkillItem(i, value) {
+  if (!value.trim()) return;
+  state.skills[i].items.push(value.trim());
+  renderSkillsForm();
+  renderAll();
+}
+function removeSkillItem(gi, ii) {
+  state.skills[gi].items.splice(ii, 1);
+  renderSkillsForm();
+  renderAll();
+}
+
+function addJob() {
+  state.experience.push({
+    title: '', company: '', location: '', start: '', end: '',
+    bullets: ['', '']
+  });
+  renderExperienceForm();
+  renderAll();
+}
+function removeJob(i) {
+  state.experience.splice(i, 1);
+  renderExperienceForm();
+  renderAll();
+}
+function setJobField(i, field, value) {
+  state.experience[i][field] = value;
+  renderAll();
+}
+function addJobBullet(i) {
+  state.experience[i].bullets.push('');
+  renderExperienceForm();
+  renderAll();
+}
+function setJobBullet(i, j, value) {
+  state.experience[i].bullets[j] = value;
+  renderAll();
+}
+function removeJobBullet(i, j) {
+  state.experience[i].bullets.splice(j, 1);
+  renderExperienceForm();
+  renderAll();
+}
+
+function addEdu() {
+  state.education.push({ degree: '', school: '', date: '' });
+  renderEducationForm();
+  renderAll();
+}
+function removeEdu(i) {
+  state.education.splice(i, 1);
+  renderEducationForm();
+  renderAll();
+}
+function setEduField(i, field, value) {
+  state.education[i][field] = value;
+  renderAll();
+}
+
+// ============================================================
+// FORM RENDERING (subsections that mutate)
+// ============================================================
+function renderAchievementsForm() {
+  const list = document.getElementById('ach-list');
+  list.innerHTML = '';
+  state.achievements.forEach((ach, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'bullet-input';
+    wrap.innerHTML = `
+      <textarea class="field-input" placeholder="${t('achievement-ph')}"
+        oninput="setAch(${i}, this.value)">${escapeHTML(ach)}</textarea>
+      <button class="remove-bullet" onclick="removeAch(${i})" title="Remove">×</button>
+    `;
+    list.appendChild(wrap);
+  });
+}
+
+function renderSkillsForm() {
+  const list = document.getElementById('skills-list');
+  list.innerHTML = '';
+  state.skills.forEach((group, gi) => {
+    const block = document.createElement('div');
+    block.className = 'job-block';
+    block.innerHTML = `
+      <div class="job-header">
+        <input class="field-input" style="font-weight:500"
+          placeholder="${t('skill-cat-ph')}"
+          value="${escapeHTML(group.category)}"
+          oninput="setSkillCat(${gi}, this.value)">
+        <button class="remove-block" onclick="removeSkillGroup(${gi})" title="Remove category">×</button>
+      </div>
+      <div class="tag-input" id="tags-${gi}">
+        ${group.items.map((it, ii) => `
+          <span class="tag">${escapeHTML(it)}<button onclick="removeSkillItem(${gi},${ii})">×</button></span>
+        `).join('')}
+        <input type="text" placeholder="${t('skill-add-ph')}"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();addSkillItem(${gi}, this.value);this.value='';}">
+      </div>
+    `;
+    list.appendChild(block);
+  });
+}
+
+function renderExperienceForm() {
+  const list = document.getElementById('exp-list');
+  list.innerHTML = '';
+  state.experience.forEach((job, i) => {
+    const block = document.createElement('div');
+    block.className = 'job-block';
+    block.innerHTML = `
+      <div class="job-header">
+        <h4>${(i + 1)}.</h4>
+        <button class="remove-block" onclick="removeJob(${i})" title="Remove role">×</button>
+      </div>
+      <div class="field">
+        <label class="field-label">${t('job-title')}</label>
+        <input class="field-input" value="${escapeHTML(job.title)}"
+          oninput="setJobField(${i}, 'title', this.value)">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">${t('job-company')}</label>
+          <input class="field-input" value="${escapeHTML(job.company)}"
+            oninput="setJobField(${i}, 'company', this.value)">
+        </div>
+        <div class="field">
+          <label class="field-label">${t('job-location')}</label>
+          <input class="field-input" value="${escapeHTML(job.location)}"
+            oninput="setJobField(${i}, 'location', this.value)">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">${t('job-start')}</label>
+          <input class="field-input" value="${escapeHTML(job.start)}"
+            oninput="setJobField(${i}, 'start', this.value)">
+        </div>
+        <div class="field">
+          <label class="field-label">${t('job-end')}</label>
+          <input class="field-input" value="${escapeHTML(job.end)}"
+            oninput="setJobField(${i}, 'end', this.value)">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">${t('job-bullets')}</label>
+        <div id="bullets-${i}">
+          ${job.bullets.map((b, j) => `
+            <div class="bullet-input">
+              <textarea class="field-input"
+                oninput="setJobBullet(${i}, ${j}, this.value)">${escapeHTML(b)}</textarea>
+              <button class="remove-bullet" onclick="removeJobBullet(${i}, ${j})">×</button>
+            </div>
+          `).join('')}
+        </div>
+        <button class="add-row" onclick="addJobBullet(${i})">${t('add-bullet')}</button>
+      </div>
+    `;
+    list.appendChild(block);
+  });
+}
+
+function renderEducationForm() {
+  const list = document.getElementById('edu-list');
+  list.innerHTML = '';
+  state.education.forEach((edu, i) => {
+    const block = document.createElement('div');
+    block.className = 'edu-block';
+    block.innerHTML = `
+      <div class="job-header">
+        <h4>${i + 1}.</h4>
+        <button class="remove-block" onclick="removeEdu(${i})">×</button>
+      </div>
+      <div class="field">
+        <label class="field-label">${t('edu-degree')}</label>
+        <input class="field-input" value="${escapeHTML(edu.degree)}"
+          oninput="setEduField(${i}, 'degree', this.value)">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">${t('edu-school')}</label>
+          <input class="field-input" value="${escapeHTML(edu.school)}"
+            oninput="setEduField(${i}, 'school', this.value)">
+        </div>
+        <div class="field">
+          <label class="field-label">${t('edu-date')}</label>
+          <input class="field-input" value="${escapeHTML(edu.date)}"
+            oninput="setEduField(${i}, 'date', this.value)">
+        </div>
+      </div>
+    `;
+    list.appendChild(block);
+  });
+}
+
+// ============================================================
+// PREVIEW RENDERING
+// ============================================================
+function escapeHTML(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function md(text) {
+  // tiny markdown: **bold** only
+  if (!text) return '';
+  return escapeHTML(text).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+
+function renderPreview() {
+  const isFa = state.lang === 'fa';
+  const sec = I18N[state.lang].sections;
+  const pv = document.getElementById('preview');
+  pv.classList.toggle('preview-fa', isFa);
+
+  let html = '';
+
+  // Header
+  if (state.name) {
+    html += `<div class="pv-name">${escapeHTML(state.name)}</div>`;
+  }
+  if (state.title) {
+    html += `<div class="pv-title">${escapeHTML(state.title)}</div>`;
+  }
+
+  // Contact line
+  const cParts = [];
+  if (state.phone) cParts.push(escapeHTML(state.phone));
+  if (state.email) cParts.push(escapeHTML(state.email));
+  if (state.linkedin) {
+    const linkText = state.linkedin.replace(/^https?:\/\/(www\.)?/, '');
+    cParts.push(`<a href="${escapeHTML(state.linkedin)}" style="color:#1F3A5F;text-decoration:underline">${escapeHTML(linkText)}</a>`);
+  }
+  if (state.location) cParts.push(escapeHTML(state.location));
+  if (state.tagline) cParts.push(escapeHTML(state.tagline));
+  if (cParts.length) {
+    html += `<div class="pv-contact">${cParts.join('<span class="sep">|</span>')}</div>`;
+  }
+
+  if (state.name || state.title || cParts.length) {
+    html += `<hr class="pv-rule">`;
+  }
+
+  // Summary
+  if (state.summary) {
+    html += `<div class="pv-section">${escapeHTML(sec.summary)}</div>`;
+    html += `<div class="pv-summary">${md(state.summary)}</div>`;
+  }
+
+  // Achievements
+  const validAch = state.achievements.filter(a => a && a.trim());
+  if (validAch.length) {
+    html += `<div class="pv-section">${escapeHTML(sec.ach)}</div>`;
+    html += `<div class="pv-ach-box">`;
+    validAch.forEach(a => {
+      html += `<div class="pv-ach-item">${md(a)}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Skills
+  const validSkills = state.skills.filter(g => g.category || (g.items && g.items.length));
+  if (validSkills.length) {
+    html += `<div class="pv-section">${escapeHTML(sec.skills)}</div>`;
+    html += `<div class="pv-skills">`;
+    validSkills.forEach(g => {
+      html += `<p>`;
+      if (g.category) html += `<b>${escapeHTML(g.category)}:</b> `;
+      html += escapeHTML(g.items.join(', '));
+      html += `</p>`;
+    });
+    html += `</div>`;
+  }
+
+  // Experience
+  const validExp = state.experience.filter(j =>
+    j.title || j.company || (j.bullets && j.bullets.some(b => b && b.trim())));
+  if (validExp.length) {
+    html += `<div class="pv-section">${escapeHTML(sec.exp)}</div>`;
+    validExp.forEach(j => {
+      html += `<div class="pv-job">`;
+      if (j.title) html += `<div class="pv-job-title">${escapeHTML(j.title)}</div>`;
+      const cp = [j.company, j.location].filter(Boolean).join(isFa ? ' | ' : '  |  ');
+      if (cp) html += `<div class="pv-job-company">${escapeHTML(cp)}</div>`;
+      const dp = [j.start, j.end].filter(Boolean).join(' – ');
+      if (dp) html += `<div class="pv-job-date">${escapeHTML(dp)}</div>`;
+      const bullets = j.bullets.filter(b => b && b.trim());
+      if (bullets.length) {
+        html += `<ul class="pv-bullets">`;
+        bullets.forEach(b => { html += `<li>${md(b)}</li>`; });
+        html += `</ul>`;
+      }
+      html += `</div>`;
+    });
+  }
+
+  // Education
+  const validEdu = state.education.filter(e => e.degree || e.school);
+  if (validEdu.length) {
+    html += `<div class="pv-section">${escapeHTML(sec.edu)}</div>`;
+    validEdu.forEach(e => {
+      html += `<div class="pv-edu">`;
+      if (e.degree) html += `<div class="pv-edu-degree">${escapeHTML(e.degree)}</div>`;
+      if (e.school) html += `<div class="pv-edu-school">${escapeHTML(e.school)}</div>`;
+      if (e.date)   html += `<div class="pv-edu-date">${escapeHTML(e.date)}</div>`;
+      html += `</div>`;
+    });
+  }
+
+  // Certs
+  if (state.certs && state.certs.trim()) {
+    html += `<div class="pv-section">${escapeHTML(sec.certs)}</div>`;
+    const certLines = state.certs.split('\n').filter(l => l.trim());
+    html += `<div class="pv-certs">${certLines.map(l => md(l)).join('<span class="sep" style="color:#999;margin:0 6px">|</span>')}</div>`;
+  }
+
+  // Languages
+  if (state.langs) {
+    html += `<div class="pv-section">${escapeHTML(sec.langs)}</div>`;
+    html += `<div class="pv-langs">${md(state.langs)}</div>`;
+  }
+
+  pv.innerHTML = html || `<div style="text-align:center;color:#999;padding:80px 20px;font-style:italic">${isFa ? 'فرم را پر کن تا پیش‌نمایش این‌جا ظاهر شود' : 'Fill in the form to see your preview'}</div>`;
+
+  // Scale preview to fit panel
+  fitPreview();
+}
+
+function fitPreview() {
+  const frame = document.getElementById('previewFrame');
+  const inner = document.getElementById('preview');
+  if (!frame || !inner) return;
+  const frameW = frame.clientWidth;
+  if (!frameW) return;
+  // 21cm = ~793px at 96dpi
+  const innerW = 793;
+  const scale = frameW / innerW;
+  inner.style.transform = `scale(${scale})`;
+  // adjust frame height to scaled inner height
+  inner.style.width = innerW + 'px';
+  inner.style.minHeight = '1122px'; // 29.7cm
+}
+window.addEventListener('resize', fitPreview);
+
+// ============================================================
+// SCORING ENGINE
+// ============================================================
+function countMetricsIn(text) {
+  if (!text) return 0;
+  // Strip markdown bold
+  const clean = text.replace(/\*\*/g, '');
+  let count = 0;
+  // Standalone forms
+  count += (clean.match(/\b\d+%/g) || []).length;          // 70%
+  count += (clean.match(/\$\s?\d+/g) || []).length;          // $50
+  count += (clean.match(/\d{1,3}(,\d{3})+/g) || []).length;  // 13,000
+  count += (clean.match(/\d+\+/g) || []).length;             // 50+
+  count += (clean.match(/\d+x\b/gi) || []).length;           // 3x
+  // Number followed by a word (catches "6 cities", "300 attendees",
+  // "10 events", etc.). Excludes pure date ranges like "2024 – Dec".
+  count += (clean.match(/\b\d+\s+[a-zA-Z\u0600-\u06FF]+/g) || []).length;
+  // Persian/Arabic-Indic numerals
+  count += (clean.match(/[\u06F0-\u06F9\u0660-\u0669]+/g) || []).length;
+  return count;
+}
+
+function startsWithStrongVerb(bullet) {
+  if (!bullet) return false;
+  // strip markdown bold + leading punctuation
+  let clean = bullet.replace(/\*\*/g, '').trim();
+  // Get first word
+  const m = clean.match(/^[\u0600-\u06FF\w'-]+/);
+  if (!m) return false;
+  let word = m[0].toLowerCase().replace(/[,.;:!?]$/, '');
+  // For Persian, also try without prefixes (e.g. "اجرای" → "اجرا")
+  if (STRONG_VERBS.has(word)) return true;
+  if (word.length > 2 && STRONG_VERBS.has(word.slice(0, -1))) return true;
+  if (word.length > 3 && STRONG_VERBS.has(word.slice(0, -2))) return true;
+  return false;
+}
+
+function findFirstWord(bullet) {
+  if (!bullet) return '';
+  let clean = bullet.replace(/\*\*/g, '').trim();
+  const m = clean.match(/^[\u0600-\u06FF\w'-]+/);
+  return m ? m[0] : '';
+}
+
+function totalText() {
+  const parts = [
+    state.name, state.title, state.summary,
+    ...state.achievements,
+    ...state.skills.flatMap(g => [g.category, ...g.items]),
+    ...state.experience.flatMap(j => [j.title, j.company, ...j.bullets]),
+    ...state.education.flatMap(e => [e.degree, e.school]),
+    state.certs, state.langs
+  ];
+  return parts.filter(Boolean).join(' ');
+}
+
+function countWords(text) {
+  if (!text) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function calculateScore() {
+  const allText = totalText();
+  const wordCount = countWords(allText);
+
+  // Collect all bullets across achievements + experience
+  const allBullets = [
+    ...state.achievements.filter(Boolean),
+    ...state.experience.flatMap(j => j.bullets.filter(Boolean))
+  ];
+
+  // ===== IMPACT (40 pts) — quantified achievements =====
+  const totalMetrics = countMetricsIn(allText);
+  const impact = Math.min(40, (totalMetrics / 12) * 40);
+
+  // ===== BREVITY (15 pts) =====
+  let brevity = 15;
+  if (wordCount < 200) brevity = 4;
+  else if (wordCount < 300) brevity = 8;
+  else if (wordCount <= 750) brevity = 15;
+  else if (wordCount <= 950) brevity = 12;
+  else brevity = 8;
+  // Penalty for long bullets
+  const longBullets = allBullets.filter(b => countWords(b) > 28).length;
+  brevity = Math.max(0, brevity - longBullets * 1.5);
+
+  // ===== STYLE (15 pts) =====
+  let strongStarts = 0;
+  allBullets.forEach(b => { if (startsWithStrongVerb(b)) strongStarts++; });
+  let style = allBullets.length === 0 ? 0 : 15 * (strongStarts / allBullets.length);
+  // pronoun penalty
+  const pronouns = state.lang === 'fa'
+    ? (allText.match(PRONOUNS_FA) || []).length
+    : (allText.match(PRONOUNS_EN) || []).length;
+  style = Math.max(0, style - pronouns * 1.5);
+
+  // ===== SECTIONS (10 pts) =====
+  let sections = 0;
+  if (state.name && state.title) sections += 2;
+  if (state.email || state.phone) sections += 2;
+  if (state.summary && state.summary.length > 30) sections += 2;
+  if (state.experience.some(j => j.title && j.bullets.some(Boolean))) sections += 2;
+  if (state.education.some(e => e.degree)) sections += 1;
+  if (state.skills.some(g => g.items.length)) sections += 1;
+
+  // ===== SOFT SKILLS (10 pts) =====
+  const softWords = ['mentor','collaborat','lead','team','communicat','partner','cross-functional','رهبری','همکاری','تیم','منتورینگ','ارتباط','هماهنگی','بین‌تیمی'];
+  const lowText = allText.toLowerCase();
+  const softHits = softWords.filter(w => lowText.includes(w)).length;
+  const soft = Math.min(10, softHits * 2);
+
+  // ===== BUZZWORD CHECK (10 pts) =====
+  let buzzCount = 0;
+  const lowLatin = allText.toLowerCase();
+  BUZZWORDS_EN.forEach(b => { if (lowLatin.includes(b)) buzzCount++; });
+  BUZZWORDS_FA.forEach(b => { if (allText.includes(b)) buzzCount++; });
+  WEAK_VERBS_EN.forEach(b => { if (lowLatin.includes(b)) buzzCount++; });
+  WEAK_VERBS_FA.forEach(b => { if (allText.includes(b)) buzzCount++; });
+  const buzzScore = Math.max(0, 10 - buzzCount * 2);
+
+  const total = impact + brevity + style + sections + soft + buzzScore;
+
+  return {
+    total: Math.round(total * 10) / 10,
+    breakdown: [
+      { key: 'rb-impact',   score: impact,    max: 40 },
+      { key: 'rb-brevity',  score: brevity,   max: 15 },
+      { key: 'rb-style',    score: style,     max: 15 },
+      { key: 'rb-sections', score: sections,  max: 10 },
+      { key: 'rb-soft',     score: soft,      max: 10 },
+      { key: 'rb-buzz',     score: buzzScore, max: 10 },
+    ],
+    meta: { wordCount, totalMetrics, allBullets, strongStarts, pronouns, buzzCount }
+  };
+}
+
+function renderScore() {
+  const result = calculateScore();
+  document.getElementById('scoreNum').textContent = Math.round(result.total);
+
+  const ratingEl = document.getElementById('scoreRating');
+  let cls = 'poor', label = t('rating-poor');
+  if (result.total >= 90) { cls = 'great'; label = t('rating-great'); }
+  else if (result.total >= 80) { cls = 'good'; label = t('rating-good'); }
+  else if (result.total >= 60) { cls = 'fair'; label = t('rating-fair'); }
+  ratingEl.className = 'score-rating ' + cls;
+  ratingEl.textContent = label;
+
+  const breakdownEl = document.getElementById('scoreBreakdown');
+  breakdownEl.innerHTML = result.breakdown.map(row => {
+    const pct = (row.score / row.max) * 100;
+    return `
+      <div class="score-row">
+        <span class="row-label">${escapeHTML(t(row.key))}</span>
+        <span class="row-bar"><span class="row-bar-fill" style="width:${pct}%"></span></span>
+        <span class="row-num">${row.score.toFixed(1)} / ${row.max}</span>
+      </div>
+    `;
+  }).join('');
+
+  return result;
+}
+
+// ============================================================
+// FEEDBACK ENGINE
+// ============================================================
+function renderFeedback(result) {
+  const list = document.getElementById('feedbackList');
+  const issues = [];
+
+  // hard misses
+  if (!state.name) issues.push(['error', t('fb-add-name')]);
+  if (!state.title) issues.push(['error', t('fb-add-title')]);
+  if (!state.email) issues.push(['error', t('fb-add-email')]);
+  if (!state.phone) issues.push(['warn', t('fb-add-phone')]);
+
+  // summary
+  const sumWords = countWords(state.summary);
+  if (!state.summary || sumWords < 10) issues.push(['error', t('fb-add-summary')]);
+  else if (sumWords < 30) issues.push(['warn', t('fb-summary-short')]);
+  else if (sumWords > 130) issues.push(['warn', t('fb-summary-long')]);
+  else if (countMetricsIn(state.summary) === 0) issues.push(['warn', t('fb-summary-no-num')]);
+
+  // achievements
+  const validAch = state.achievements.filter(a => a && a.trim());
+  if (validAch.length < 4) issues.push(['warn', t('fb-no-ach')]);
+  validAch.forEach((a, i) => {
+    if (countMetricsIn(a) === 0) {
+      issues.push(['warn', t('fb-ach-no-num', { n: i + 1 })]);
+    }
+  });
+
+  // skills
+  if (state.skills.filter(g => g.items && g.items.length).length < 4) {
+    issues.push(['warn', t('fb-no-skills')]);
+  }
+
+  // experience
+  if (!state.experience.some(j => j.title && j.bullets.some(Boolean))) {
+    issues.push(['error', t('fb-no-exp')]);
+  } else {
+    state.experience.forEach((j, ji) => {
+      if (!j.title) return;
+      const validBullets = j.bullets.filter(Boolean);
+      let bulletsWithoutNum = 0;
+      let firstWeakIdx = -1;
+      let firstWeakWord = '';
+      validBullets.forEach((b, bi) => {
+        const w = countWords(b);
+        if (w > 32) {
+          issues.push(['warn', t('fb-bullet-long',
+            { role: j.title || ('Role ' + (ji + 1)), n: bi + 1, words: w })]);
+        }
+        if (countMetricsIn(b) === 0 && w >= 5) {
+          bulletsWithoutNum++;
+        }
+        if (!startsWithStrongVerb(b) && w >= 3 && firstWeakIdx === -1) {
+          firstWeakIdx = bi;
+          firstWeakWord = findFirstWord(b);
+        }
+      });
+      // Only flag missing-numbers if MORE THAN HALF the bullets lack metrics
+      if (validBullets.length >= 3 &&
+          bulletsWithoutNum > validBullets.length / 2) {
+        issues.push(['warn', t('fb-no-bullet-num-many',
+          { role: j.title, n: bulletsWithoutNum, total: validBullets.length })]);
+      }
+      if (firstWeakIdx >= 0) {
+        issues.push(['warn', t('fb-weak-verb',
+          { role: j.title, n: firstWeakIdx + 1, word: firstWeakWord })]);
+      }
+    });
+  }
+
+  // education
+  if (!state.education.some(e => e.degree)) {
+    issues.push(['warn', t('fb-no-edu')]);
+  }
+
+  // languages
+  if (!state.langs) {
+    issues.push(['warn', t('fb-no-langs')]);
+  }
+
+  // pronouns + buzzwords
+  const allText = totalText();
+  const pronounMatches = state.lang === 'fa'
+    ? (allText.match(PRONOUNS_FA) || [])
+    : (allText.match(PRONOUNS_EN) || []);
+  if (pronounMatches.length) {
+    issues.push(['warn', t('fb-pronoun', { word: pronounMatches[0] })]);
+  }
+
+  const lowLatin = allText.toLowerCase();
+  for (const w of [...BUZZWORDS_EN, ...WEAK_VERBS_EN]) {
+    if (lowLatin.includes(w)) {
+      issues.push(['warn', t('fb-buzzword', { word: w })]);
+      break;
+    }
+  }
+  for (const w of [...BUZZWORDS_FA, ...WEAK_VERBS_FA]) {
+    if (allText.includes(w)) {
+      issues.push(['warn', t('fb-buzzword', { word: w })]);
+      break;
+    }
+  }
+
+  // wins
+  if (state.summary && countMetricsIn(state.summary) >= 2 && sumWords >= 30 && sumWords <= 130) {
+    issues.push(['win', t('fb-strong-summary')]);
+  }
+  if (validAch.length >= 5 && validAch.every(a => countMetricsIn(a) > 0)) {
+    issues.push(['win', t('fb-strong-ach')]);
+  }
+  if (result.meta.allBullets.length >= 6 &&
+      result.meta.strongStarts === result.meta.allBullets.length) {
+    issues.push(['win', t('fb-strong-verbs')]);
+  }
+  if (result.meta.buzzCount === 0) {
+    issues.push(['win', t('fb-no-buzz')]);
+  }
+  if (result.meta.pronouns === 0 && result.meta.allBullets.length > 0) {
+    issues.push(['win', t('fb-no-pronouns')]);
+  }
+  if (result.meta.wordCount >= 400 && result.meta.wordCount <= 800) {
+    issues.push(['win', t('fb-good-length')]);
+  }
+
+  // sort: errors > warns > wins
+  const order = { error: 0, warn: 1, win: 2 };
+  issues.sort((a, b) => order[a[0]] - order[b[0]]);
+
+  if (issues.length === 0) {
+    list.innerHTML = `<li class="fb-empty">${t('feedback-empty')}</li>`;
+    return;
+  }
+
+  list.innerHTML = issues.slice(0, 14).map(([type, msg]) => `
+    <li class="feedback-item">
+      <span class="fb-tag ${type}">${type === 'error' ? '!' : type === 'warn' ? '?' : '✓'}</span>
+      <span class="fb-text">${msg}</span>
+    </li>
+  `).join('');
+}
+
+// ============================================================
+// MASTER RENDER
+// ============================================================
+function renderAll() {
+  // sync simple inputs (in case state was set from JSON)
+  syncSimpleInputs();
+  updateMeta();
+  renderPreview();
+  const result = renderScore();
+  renderFeedback(result);
+}
+
+function syncSimpleInputs() {
+  const map = {
+    'f-name': 'name', 'f-title': 'title', 'f-phone': 'phone',
+    'f-email': 'email', 'f-linkedin': 'linkedin', 'f-location': 'location',
+    'f-tagline': 'tagline', 'f-summary': 'summary', 'f-certs': 'certs',
+    'f-langs': 'langs',
+  };
+  for (const [id, key] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if (el && el.value !== state[key]) el.value = state[key] || '';
+  }
+}
+
+function updateMeta() {
+  // summary word count meta
+  const sumWords = countWords(state.summary);
+  const metaSum = document.getElementById('meta-summary');
+  if (metaSum) {
+    let cls = '';
+    if (sumWords > 0) {
+      if (sumWords < 30 || sumWords > 130) cls = 'hint-warn';
+      else cls = 'hint-good';
+    }
+    metaSum.innerHTML = `<span class="${cls}">${sumWords} ${state.lang==='fa'?'کلمه':'words'}</span>`;
+  }
+  const metaAch = document.getElementById('meta-achievements');
+  if (metaAch) {
+    const c = state.achievements.filter(a => a && a.trim()).length;
+    metaAch.textContent = `${c} / 5`;
+  }
+  const metaSk = document.getElementById('meta-skills');
+  if (metaSk) {
+    const c = state.skills.filter(g => g.items && g.items.length).length;
+    metaSk.textContent = `${c}`;
+  }
+  const metaEx = document.getElementById('meta-experience');
+  if (metaEx) {
+    const c = state.experience.filter(j => j.title).length;
+    metaEx.textContent = `${c}`;
+  }
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+function saveJSON() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (state.name || 'resume').replace(/\s+/g, '_') + '_data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function loadJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const loaded = JSON.parse(e.target.result);
+      state = Object.assign(initialState(), loaded);
+      setLang(state.lang || 'en');
+      renderAchievementsForm();
+      renderSkillsForm();
+      renderExperienceForm();
+      renderEducationForm();
+      renderAll();
+    } catch (err) {
+      alert('Invalid JSON file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportDOCX() {
+  // Generate Word-compatible HTML doc (simpler than docx.js, opens fine in Word)
+  const isFa = state.lang === 'fa';
+  const dir = isFa ? 'rtl' : 'ltr';
+  const fontFamily = isFa ? "Tahoma, sans-serif" : "Calibri, Arial, sans-serif";
+  const previewHTML = document.getElementById('preview').innerHTML;
+
+  const docHTML = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40' dir="${dir}">
+<head><meta charset='utf-8'>
+<title>${escapeHTML(state.name || 'Resume')}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View>
+  <w:Zoom>90</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>
+@page { size: A4; margin: 1.4cm 1.6cm; }
+body { font-family: ${fontFamily}; font-size: 10pt; color: #111; direction: ${dir}; }
+.pv-name { font-weight: bold; font-size: 20pt; color: #1F3A5F; }
+.pv-title { font-size: 12pt; color: #444; margin-bottom: 6px; }
+.pv-contact { font-size: 9pt; }
+.pv-contact .sep { color: #999; margin: 0 6px; }
+.pv-rule { border-top: 0.8pt solid #1F3A5F; margin: 6px 0; }
+.pv-section { font-weight: bold; font-size: 11pt; color: #1F3A5F;
+  text-transform: uppercase; letter-spacing: 0.02em; margin-top: 12px;
+  border-bottom: 0.6pt solid #1F3A5F; padding-bottom: 3px; }
+.preview-fa .pv-section { text-transform: none; }
+.pv-summary { margin: 6px 0; text-align: justify; line-height: 1.45; }
+.pv-ach-box { background: #F2F5FA; padding: 6px 10px; margin: 6px 0; }
+.pv-ach-item { margin: 2px 0; line-height: 1.45; }
+.pv-ach-item:before { content: '› '; color: #1F3A5F; font-weight: bold; }
+.pv-skills p { margin: 1px 0; line-height: 1.4; }
+.pv-job { margin-top: 8px; }
+.pv-job-title { font-weight: bold; font-size: 10.5pt; }
+.pv-job-company { font-style: italic; font-size: 10pt; color: #444; }
+.pv-job-date { font-size: 9pt; color: #666; margin-bottom: 4px; }
+.pv-bullets { margin: 4px 0; padding-${isFa ? 'right' : 'left'}: 18px; }
+.pv-bullets li { margin: 0 0 2px; line-height: 1.4; }
+.pv-edu { margin-top: 8px; }
+.pv-edu-degree { font-weight: bold; font-size: 10.5pt; }
+.pv-edu-school { font-style: italic; font-size: 10pt; color: #444; }
+.pv-edu-date { font-size: 9pt; color: #666; }
+.pv-langs, .pv-certs { margin: 6px 0; }
+b { font-weight: bold; }
+</style>
+</head>
+<body class="${isFa ? 'preview-fa' : ''}">${previewHTML}</body>
+</html>`;
+
+  const blob = new Blob(['\ufeff', docHTML], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (state.name || 'resume').replace(/\s+/g, '_') + '.doc';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetData() {
+  if (!confirm(state.lang === 'fa'
+    ? 'تمام داده‌ها پاک شوند؟'
+    : 'Clear all data?')) return;
+  const lang = state.lang;
+  state = initialState();
+  state.lang = lang;
+  renderAchievementsForm();
+  renderSkillsForm();
+  renderExperienceForm();
+  renderEducationForm();
+  renderAll();
+}
+
+// ============================================================
+// DEMO DATA
+// ============================================================
+function loadDemo() {
+  const en = state.lang === 'en';
+  state = en ? demoEN() : demoFA();
+  state.lang = en ? 'en' : 'fa';
+  renderAchievementsForm();
+  renderSkillsForm();
+  renderExperienceForm();
+  renderEducationForm();
+  renderAll();
+}
+
+function demoEN() {
+  return {
+    lang: 'en',
+    name: 'Yasaman Sobhani',
+    title: 'Senior Event & BTL Campaign Manager | Experiential Marketing',
+    phone: '+98 919 904 2512',
+    email: 'sobhani_yasaman@yahoo.com',
+    linkedin: 'https://www.linkedin.com/in/yasamansobhani',
+    location: 'Tehran, Iran',
+    tagline: 'Open to Remote & International Roles',
+    summary: "Senior Event & BTL Campaign Manager with **7+ years** delivering experiential marketing for **10+ category-leading brands** including **Unilever (Dove, Clear, Sunsilk)**, **Sanofi**, **Snapp**, **Hyperstar**, and **Pegah**. Track record of **20+ flagship events**, **300+ attendee** engagements, and **30% lead-capture uplift** via interactive booth design. Specialized in BTL ideation, gamification, roadshows, and 360° brand activation.",
+    achievements: [
+      "Executed Dove's **'Redefining Beauty' BTL campaign** across **Tehran + 6 northern coastal cities** for Iran Unilever",
+      "**30% lift in lead capture** via interactive booth design for Novin Travel at Tehran Tourism Exhibition",
+      "Planned and executed **10+ high-impact events** for category-leading brands (Unilever, Sanofi, Snapp, Hyperstar, Pegah)",
+      "Delivered **Sanofi's flagship event for 300+ attendees**, exceeding engagement targets",
+      "Managed **30 consecutive lottery events** for Shahr-e Lavazem-e Khanegi (Home Appliances City)"
+    ],
+    skills: [
+      { category: 'Event Strategy & Production', items: ['BTL campaigns','experiential marketing','brand activation','roadshow design','gamification','interactive booths'] },
+      { category: 'Campaign Development', items: ['360° marketing','BTL/ATL ideation','campaign proposal writing','persona-led design','consumer-behavior analysis'] },
+      { category: 'Marketing Disciplines', items: ['guerrilla marketing','content marketing','social media','UX writing','brand storytelling','lead generation'] },
+      { category: 'Tools', items: ['Figma','Microsoft Office','WordPress','Google Analytics'] },
+      { category: 'Industries', items: ['FMCG','Pharma','Retail','FoodTech','Automotive','Travel','B2B Tech','Startups'] },
+      { category: 'Soft Skills', items: ['Cross-functional leadership','problem-solving','stakeholder communication','creative direction'] }
+    ],
+    experience: [
+      {
+        title: 'Senior Event & BTL Campaign Specialist',
+        company: 'Pol Advertising Agency',
+        location: 'Tehran, Iran',
+        start: 'Dec 2024',
+        end: 'Present',
+        bullets: [
+          "**Executed** the year-end **Home Cleaning campaign** for **Iran Unilever** (with Asparad) — owned event production, project management, and reporting.",
+          "**Led** BTL execution for **Snapp's first in-person shopping campaign** at Opal and Niayesh Mall.",
+          "**Delivered** Dove's **'Redefining Beauty' campaign** across Tehran and **6 northern cities**, plus the flagship Agroshow event.",
+          "**Managed** Clear's product-launch and brand-ambassador event, and Dr. Abidi's Novaxa launch.",
+          "**Mentored** junior event coordinators on BTL execution standards and on-site coordination."
+        ]
+      },
+      {
+        title: 'Event Manager',
+        company: 'Iran-e Novin Agency',
+        location: 'Tehran, Iran',
+        start: 'Dec 2023',
+        end: 'Dec 2024',
+        bullets: [
+          "**Planned** Sanofi's flagship pharma event for **300+ attendees** — owned logistics, vendor coordination, and on-site delivery.",
+          "**Designed** Novin Travel's interactive booth at Tehran Tourism Exhibition, lifting **lead capture by 30%** via digital-first activations.",
+          "**Managed 30 consecutive lottery events** for Shahr-e Lavazem-e Khanegi.",
+          "**Built** a gamified **escape-room activation** with interactive mapping for Ghoncheh Oil and a farm-concept **roadshow** for Hey Day."
+        ]
+      }
+    ],
+    education: [
+      {
+        degree: 'M.Sc. in Biomedical Engineering — Ergonomics',
+        school: 'Shahid Beheshti University of Medical Sciences, Tehran, Iran',
+        date: '2022 – Present'
+      },
+      {
+        degree: 'B.Sc. in Biomedical Engineering — Biomechanics',
+        school: 'Islamic Azad University, Science and Research Branch, Tehran, Iran',
+        date: '2016 – 2020'
+      }
+    ],
+    certs: "**360° Marketing Campaign Design** — Yektanet (2022)\n**Advanced Marketing** — Rahnema College (2022)\n**Digital Marketing** — Tapsell (2021)",
+    langs: 'Persian — Native | English — Upper-Intermediate | Spanish — Elementary'
+  };
+}
+
+function demoFA() {
+  return {
+    lang: 'fa',
+    name: 'یاسمن سبحانی',
+    title: 'کارشناس ارشد ایونت و کمپین BTL | بازاریابی تجربی و فعال‌سازی برند',
+    phone: '۰۹۱۹‌۹۰۴‌۲۵۱۲',
+    email: 'sobhani_yasaman@yahoo.com',
+    linkedin: 'https://www.linkedin.com/in/yasamansobhani',
+    location: 'تهران، ایران',
+    tagline: 'آماده همکاری دورکاری و بین‌المللی',
+    summary: 'کارشناس ارشد ایونت و کمپین BTL با **بیش از ۷ سال** تجربه در طراحی و اجرای کمپین‌های بازاریابی تجربی و ایونت‌های اثرگذار برای **بیش از ۱۰ برند پیشرو** از جمله **یونیلیور (داو، کلییر، سان‌سیلک)**، **سانوفی**، **اسنپ**، **هایپراستار** و **پگاه**. رکورد اثبات‌شده: **بیش از ۲۰ ایونت پرچم‌دار**، ایونت‌های **۳۰۰+ نفره** و **رشد ۳۰٪ نرخ جذب لید**.',
+    achievements: [
+      "اجرای کمپین BTL **«زیبایی را دوباره معنا کنیم»** برند داو در **تهران و ۶ شهر شمالی** برای ایران یونیلیور",
+      "**رشد ۳۰٪ نرخ جذب لید** با طراحی غرفه تعاملی نوین تراول در نمایشگاه گردشگری تهران",
+      "برنامه‌ریزی و اجرای **بیش از ۱۰ ایونت پربازده** برای برندهای پیشرو",
+      "اجرای ایونت پرچم‌دار سانوفی برای **بیش از ۳۰۰ شرکت‌کننده**",
+      "مدیریت **۳۰ ایونت متوالی قرعه‌کشی** برای شهر لوازم خانگی"
+    ],
+    skills: [
+      { category: 'استراتژی و اجرای ایونت', items: ['کمپین‌های BTL','بازاریابی تجربی','فعال‌سازی برند','طراحی رودشو','گیمیفیکیشن','غرفه‌های تعاملی'] },
+      { category: 'توسعه کمپین', items: ['بازاریابی ۳۶۰ درجه','ایده‌پردازی BTL/ATL','نگارش پروپوزال','طراحی پرسونا‌محور'] },
+      { category: 'ابزارها', items: ['Figma','Microsoft Office','WordPress','Google Analytics'] },
+      { category: 'صنایع تخصصی', items: ['FMCG','دارویی','خرده‌فروشی','فودتک','خودرو','گردشگری'] },
+      { category: 'مهارت‌های نرم', items: ['رهبری بین‌تیمی','حل مسئله','ارتباط با ذی‌نفعان','هدایت خلاقانه'] }
+    ],
+    experience: [
+      {
+        title: 'کارشناس ارشد ایونت و کمپین BTL',
+        company: 'شرکت تبلیغاتی پل',
+        location: 'تهران، ایران',
+        start: 'دی ۱۴۰۳',
+        end: 'تاکنون',
+        bullets: [
+          "**اجرا** کمپین آخر سال «Home Cleaning» برای ایران یونیلیور — مالکیت تولید رویداد و گزارش‌دهی.",
+          "**رهبری** اجرای BTL **اولین کمپین خرید حضوری اسنپ‌پی** در اپال‌مال و نیایش‌مال.",
+          "**اجرا** کمپین **«زیبایی را دوباره معنا کنیم»** برند داو در تهران و **۶ شهر شمالی**.",
+          "**منتورینگ** کوآردیناتورهای جوان ایونت در اجرای استانداردهای BTL."
+        ]
+      },
+      {
+        title: 'ایونت منیجر',
+        company: 'کانون ایران نوین',
+        location: 'تهران، ایران',
+        start: 'دی ۱۴۰۲',
+        end: 'دی ۱۴۰۳',
+        bullets: [
+          "**برنامه‌ریزی** ایونت پرچم‌دار سانوفی برای **بیش از ۳۰۰ شرکت‌کننده**.",
+          "**طراحی** غرفه تعاملی نوین تراول با **رشد ۳۰٪ جذب لید**.",
+          "**مدیریت** **۳۰ ایونت متوالی قرعه‌کشی** برای شهر لوازم خانگی."
+        ]
+      }
+    ],
+    education: [
+      {
+        degree: 'کارشناسی ارشد مهندسی پزشکی — گرایش ارگونومی',
+        school: 'دانشگاه علوم پزشکی شهید بهشتی، تهران',
+        date: '۱۴۰۱ – تاکنون'
+      },
+      {
+        degree: 'کارشناسی مهندسی پزشکی — گرایش بیومکانیک',
+        school: 'دانشگاه آزاد اسلامی، واحد علوم و تحقیقات تهران',
+        date: '۱۳۹۵ – ۱۳۹۹'
+      }
+    ],
+    certs: "**طراحی کمپین‌های ۳۶۰ درجه مارکتینگ** — یکتانت (۱۴۰۱)\n**مارکتینگ پیشرفته** — رهنماکالج (۱۴۰۱)\n**دیجیتال مارکتینگ** — تپسل (۱۴۰۰)",
+    langs: 'فارسی — مادری | انگلیسی — بالاتر از متوسط | اسپانیایی — مقدماتی'
+  };
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  applyI18N();
+  renderAchievementsForm();
+  renderSkillsForm();
+  renderExperienceForm();
+  renderEducationForm();
+  renderAll();
+  setTimeout(fitPreview, 100);
+}
+
+init();
+
+</script>
+</body>
+</html>
